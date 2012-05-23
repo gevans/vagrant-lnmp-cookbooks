@@ -58,8 +58,8 @@ Vagrant::Config.run do |config|
 
     chef.json.merge! \
       :vagrant_main => {
-        :root    => File.expand_path("..", __FILE__),
-        :docroot => File.expand_path("../public", __FILE__)
+        :root    => File.expand_path("..", __FILE__),       # "./" relative to Vagrantfile
+        :docroot => File.expand_path("../public", __FILE__) # "./public" relative to Vagrantfile
       }
   end
 end
