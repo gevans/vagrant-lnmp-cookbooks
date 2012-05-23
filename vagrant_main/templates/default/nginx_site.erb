@@ -1,0 +1,51 @@
+# THIS FILE IS MANAGED BY CHEF. ANY CHANGES WILL BE OVERWRITTEN ON CHEF RUN.
+#
+# This is a generated file, do not modify by hand
+
+server {
+  listen 80;
+  server_name localhost <%= node[:vagrant_main][:application_name] %>.dev www.<%= node[:vagrant_main][:application_name] %>.dev <%= node[:vagrant_main][:application_name] %> <%= node[:vagrant_main][:application_name] %>.localhost;
+
+  access_log <%= node[:nginx][:log_dir] %>/<%= node[:vagrant_main][:application_name] %>-access.log;
+  error_log <%= node[:nginx][:log_dir] %>/<%= node[:vagrant_main][:application_name] %>-error.log;
+
+  client_max_body_size 1000m;
+
+  location ~ /\. {
+    return 404;
+  }
+
+  location ~* ^/(modules|application|system) {
+    return 404;
+  }
+
+  location = /favicon.ico {
+    log_not_found off;
+    access_log off;
+  }
+
+  location = /robots.txt {
+    allow all;
+    log_not_found off;
+    access_log off;
+  }
+
+  root <%= node[:vagrant_main][:docroot] %>;
+  index index.html index.htm index.php;
+
+  try_files $uri $uri/ /index.php?$args;
+
+  # Execute PHP files (WARNING: Do not use in production)
+  location ~* \.php$ {
+    include fastcgi_params;
+    fastcgi_param KOHANA_ENV development;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    fastcgi_param HTTPS off;
+    fastcgi_index index.php;
+    fastcgi_pass unix:/var/run/php5-fpm.sock;
+
+    # Increase timeouts when debugging
+    fastcgi_read_timeout 900;
+    fastcgi_send_timeout 900;
+  }
+}
